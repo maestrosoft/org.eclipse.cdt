@@ -1222,6 +1222,26 @@ public class ToolReference implements IToolReference {
 	@Override
 	public void addOptionCategory(IOptionCategory category) {
 	}
+	
+	@Override
+	public void setSupportsMergeOutput(boolean mergeOutput) {
+	}
+	
+	@Override
+	public boolean isSupportsMergeOutput() {
+		return false;
+	}	
+	
+	
+	@Override
+	public void setToolDisplayable(boolean displayable) {
+	}
+	
+	@Override
+	public boolean isDisplayable() {
+		return false;
+	}	
+	
 
 	/*
 	 * The following methods are added to allow the converter from ToolReference -> Tool
