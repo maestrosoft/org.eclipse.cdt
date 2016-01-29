@@ -51,6 +51,15 @@ public interface ITool extends IHoldsOptions {
 	 * @since 8.4
 	 */
 	public static final String IS_HIDDEN = "isHidden";	//$NON-NLS-1$	
+	/**
+	 * @since 8.5
+	 */
+	public static final String SUPPORTS_MERGE_OUTPUT = "supportsMergeOutput";	//$NON-NLS-1$	
+	/**
+	 * @since 8.5
+	 */
+	public static final String IS_DISPLAYABLE = "isDisplayable";	//$NON-NLS-1$	
+	
 	
 	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
@@ -710,6 +719,27 @@ public interface ITool extends IHoldsOptions {
 	 * @since 8.4
 	 */
 	void setHidden(boolean hidden);
+	
+	/**
+	 * @since 8.5
+	 */
+	boolean isSupportsMergeOutput();
+	
+	/**
+	 * @since 8.5
+	 */
+	void setSupportsMergeOutput(boolean mergeOutput);
+	
+	/**
+	 * @since 8.5
+	 */
+	boolean isDisplayable();
+	
+	/**
+	 * @since 8.5
+	 */
+	void setToolDisplayable(boolean displayability);
+		
 	
 	String getUniqueRealName();
 }

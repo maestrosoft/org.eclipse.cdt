@@ -464,11 +464,10 @@ public class ToolReference implements IToolReference {
 	public String getToolCommand() {
 		if (command == null) {
 			// see if the parent has one
-			if (parent == null) {
-				// bad reference
-				return ""; //$NON-NLS-1$
+			if (parent != null) {
+				return parent.getToolCommand();
 			}
-			return parent.getToolCommand();
+			return new String();	// bad reference
 		}
 		return command;
 	}
@@ -1232,6 +1231,25 @@ public class ToolReference implements IToolReference {
 	public boolean isHidden() {
 		return false;
 	}	
+		
+	@Override
+	public void setSupportsMergeOutput(boolean mergeOutput) {
+	}
+	
+	@Override
+	public boolean isSupportsMergeOutput() {
+		return false;
+	}	
+		
+	@Override
+	public void setToolDisplayable(boolean displayable) {
+	}
+	
+	@Override
+	public boolean isDisplayable() {
+		return false;
+	}	
+	
 	
 
 	/*

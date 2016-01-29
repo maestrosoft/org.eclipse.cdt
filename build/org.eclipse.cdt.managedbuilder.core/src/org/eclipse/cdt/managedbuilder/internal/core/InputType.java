@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.resources.IProject;
@@ -293,6 +294,8 @@ public class InputType extends BuildObject implements IInputType {
 		if (copyIds){
 			isDirty = inputType.isDirty;
 			rebuildState = inputType.rebuildState;
+			if((DbgUtil.DEBUG & DbgUtil.INPUT_TYPE) != 0)
+				DbgUtil.trace("InputType() - " + getName()  + " - rebuildState = " + rebuildState + " - Tool = " + parent.getId() + " - " + this); 			
 		} else {
 			setDirty(true);
 			setRebuildState(true);
@@ -763,7 +766,8 @@ public class InputType extends BuildObject implements IInputType {
 	public IInputOrder getInputOrder(String path) {
 		// TODO Convert both paths to absolute?
 		for (InputOrder io : getInputOrderList()) {
-			if (path.compareToIgnoreCase(io.getPath()) == 0) {
+			String ioPath = (new Path(io.getPath())).toOSString();
+			if (path.compareToIgnoreCase(ioPath) == 0) {
 				return io;
 			}
 		}
@@ -1680,6 +1684,9 @@ public class InputType extends BuildObject implements IInputType {
 		if(isExtensionElement() && rebuild)
 			return;
 
+		if((DbgUtil.DEBUG & DbgUtil.INPUT_TYPE) != 0)
+			DbgUtil.trace("InputType.setRebuildState() - "  + getName()  +  " - rebuild = " + rebuild + " - Tool = " + parent.getId() + " - " + this); 
+		
 		rebuildState = rebuild;
 
 		// Propagate "false" to the children

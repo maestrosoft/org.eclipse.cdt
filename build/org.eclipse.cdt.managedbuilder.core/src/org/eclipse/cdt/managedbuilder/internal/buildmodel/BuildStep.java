@@ -77,8 +77,8 @@ public class BuildStep implements IBuildStep {
 		fInputType = inputType;
 		fBuildDescription = des;
 
-		if (DbgUtil.DEBUG)
-			DbgUtil.trace("step " + DbgUtil.stepName(this) + " created"); //$NON-NLS-1$ //$NON-NLS-2$
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_STEP) != 0)
+			DbgUtil.trace("BuildStep() - step " + DbgUtil.stepName(this) + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		des.stepCreated(this);
 	}
@@ -96,17 +96,25 @@ public class BuildStep implements IBuildStep {
 	@Override
 	public boolean needsRebuild() {
 		if (fNeedsRebuild || (fTool != null && fTool.needsRebuild())
-				|| (fLibTool != null && fLibTool.needsRebuild()))
+				|| (fLibTool != null && fLibTool.needsRebuild())) {
+			if((DbgUtil.DEBUG & DbgUtil.BUILD_STEP) != 0)
+				DbgUtil.trace("BuildStep.needsRebuild()  - return true - fNeedsRebuild is " + fNeedsRebuild); //$NON-NLS-1$				
 			return true;
+		}
 
-		if (fBuildGroup != null && fBuildGroup.needsRebuild())
+		if (fBuildGroup != null && fBuildGroup.needsRebuild()) {
+			if((DbgUtil.DEBUG & DbgUtil.BUILD_STEP) != 0)
+				DbgUtil.trace("BuildStep.needsRebuild()  - fBuildGroup return true"); //$NON-NLS-1$					
 			return true;
+		}
 
 		return false;
 	}
 
 	public void setRebuildState(boolean rebuild) {
 		fNeedsRebuild = rebuild;
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_STEP) != 0)
+			DbgUtil.trace("BuildStep.setRebuildState() - step  " + DbgUtil.stepName(this) + " Setting fNeedsRebuild = " + rebuild);	//$NON-NLS-1$	//$NON-NLS-2$		
 	}
 
 	public BuildResource[] removeIOType(BuildIOType type) {
@@ -124,8 +132,8 @@ public class BuildStep implements IBuildStep {
 	BuildResource[][] remove() {
 		BuildResource[][] rcs = clear();
 
-		if (DbgUtil.DEBUG)
-			DbgUtil.trace("step  " + DbgUtil.stepName(this) + " removed"); //$NON-NLS-1$ //$NON-NLS-2$
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_STEP) != 0)
+			DbgUtil.trace("BuildStep.remove() - step  " + DbgUtil.stepName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		fBuildDescription.stepRemoved(this);
 		fBuildDescription = null;
@@ -605,6 +613,8 @@ public class BuildStep implements IBuildStep {
 	public void setRemoved() {
 		fIsRemoved = true;
 		fNeedsRebuild = false;
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_STEP) != 0)
+			DbgUtil.trace("BuildStep.setRemoved() - step  " + DbgUtil.stepName(this) + " fNeedsRebuild = false");	//$NON-NLS-1$	//$NON-NLS-2$		
 	}
 
 	@Override
