@@ -14,6 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.osgi.util.TextProcessor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -122,7 +123,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		label.setLayoutData(labelData);
 		
 		// Now add the combo selector
-		optionSelector = ControlFactory.createSelectCombo(parent, getOptions(), selected);
+		optionSelector = ControlFactory.createSelectCombo(parent, getOptions(), selected, SWT.H_SCROLL | SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		GridData selectorData = (GridData) optionSelector.getLayoutData();
 		selectorData.horizontalSpan = numColumns - 1;
 		selectorData.grabExcessHorizontalSpace = true;
