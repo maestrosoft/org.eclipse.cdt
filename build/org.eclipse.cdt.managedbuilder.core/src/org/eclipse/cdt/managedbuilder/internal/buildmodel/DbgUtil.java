@@ -23,11 +23,23 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
  * this is the build description debug utility class
  */
 public class DbgUtil {
-	public static boolean DEBUG = false;
+	public static int DEBUG = 0; //DbgUtil.BUILD_STEP | DbgUtil.TOOL | DbgUtil.BUILD_DESCRIPTION | DbgUtil.INPUT_TYPE | DbgUtil.COMMAND_BUILDER;
 	private static PrintStream out = System.out;
 	private static final String TRACE_PREFIX = "BuildModel[ ";	//$NON-NLS-1$
 	private static final String TRACE_SUFIX = " ]";	//$NON-NLS-1$
-
+	public static final int BUILD_DESCRIPTION_MANAGER = 1;
+	public static final int BUILD_DESCRIPTION = 2;
+	public static final int BUILD_IO_TYPE = 4;
+	public static final int BUILD_RESOURCE = 8;
+	public static final int BUILD_STEP = 16;
+	public static final int COMMAND_BUILDER = 32;
+	public static final int DESCRIPTION_BUILDER = 64;
+	public static final int STEP_BUILDER = 128;
+	public static final int TOOL = 256;
+	public static final int GEN_DIR_INFO = 512;
+	public static final int INTERNAL_BUILDER = 1024;
+	public static final int INPUT_TYPE = 2048;
+   public static final int MICROSOFT_VISUAL_CPP = 4096;
 	
 	public static void trace(String str){
 		out.println(formatMsg(str));

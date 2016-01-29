@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IConfigurationBuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IProjectBuildState;
@@ -125,7 +126,11 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 
 			int status;
 			if (dBuilder != null) {
+				if((DbgUtil.DEBUG & DbgUtil.INTERNAL_BUILDER) != 0)
+					DbgUtil.trace("InternalBuildRunner.invokeBuild() >> Entering");	//$NON-NLS-1$	//$NON-NLS-2$				
 				status = dBuilder.build(stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				if((DbgUtil.DEBUG & DbgUtil.INTERNAL_BUILDER) != 0)
+					DbgUtil.trace("InternalBuildRunner.invokeBuild() << Exiting");	//$NON-NLS-1$	//$NON-NLS-2$
 			} else {
 				status = ParallelBuilder.build(des, null, null, stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), resumeOnErr, buildIncrementaly);
 				// Bug 403670:
