@@ -101,7 +101,9 @@ public class CommandBuilder implements IBuildModelBuilder {
 
 			ICommandLauncher launcher = createLauncher();
 			launcher.showCommand(true);
-
+			if((DbgUtil.DEBUG & DbgUtil.COMMAND_BUILDER) != 0){
+				DbgUtil.trace("CommandBuilder.build() - " + getCommandLine() );	//$NON-NLS-1$
+			}
 			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
 			if (fProcess != null) {
 				try {
