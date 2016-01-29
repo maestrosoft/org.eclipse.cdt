@@ -254,7 +254,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			}
 			String buildModel = Platform.getDebugOption(BUILD_MODEL);
 			if(buildModel != null){
-				DbgUtil.DEBUG = buildModel.equalsIgnoreCase("true"); //$NON-NLS-1$
+				DbgUtil.DEBUG = Integer.parseInt(buildModel); //$NON-NLS-1$
 			}
 		}
 	}
