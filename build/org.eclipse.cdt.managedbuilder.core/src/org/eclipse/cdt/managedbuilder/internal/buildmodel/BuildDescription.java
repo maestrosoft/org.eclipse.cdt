@@ -270,7 +270,7 @@ public class BuildDescription implements IBuildDescription {
 //		private Set<IBuildStep> fStepSet = new HashSet<IBuildStep>();
 //
 //		public int visit(IBuildStep action) throws CoreException {
-//			if(DbgUtil.DEBUG){
+//			if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0){
 //				DbgUtil.trace("StepCollector: visiting step " + DbgUtil.stepName(action));	//$NON-NLS-1$
 //			}
 //			fStepSet.add(action);
@@ -302,8 +302,8 @@ public class BuildDescription implements IBuildDescription {
 			boolean rebuild = action.needsRebuild();
 			boolean removed = action.isRemoved();
 
-			if(DbgUtil.DEBUG){
-				DbgUtil.trace(">>visiting step " + DbgUtil.stepName(a));	//$NON-NLS-1$
+			if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0){
+				DbgUtil.trace("BuildDescription.visit() >> visiting step " + DbgUtil.stepName(a));	//$NON-NLS-1$
 			}
 
 			if(!removed){
@@ -331,13 +331,13 @@ public class BuildDescription implements IBuildDescription {
 			if(!removed && !rebuild){
 				for (BuildResource rc : rcs) {
 					if(rc.needsRebuild()){
-						if(DbgUtil.DEBUG)
-							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " needs rebuild");	//$NON-NLS-1$	//$NON-NLS-2$
+						if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+							DbgUtil.trace("BuildDescription.visit() - resource " + locationToRel(rc.getLocation()).toString() + " needs rebuild");	//$NON-NLS-1$	//$NON-NLS-2$
 						rebuild = true;
 						break;
 					} else if(rc.isRemoved()){
-						if(DbgUtil.DEBUG)
-							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " is removed");	//$NON-NLS-1$ 	//$NON-NLS-2$
+						if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+							DbgUtil.trace("BuildDescription.visit() - resource " + locationToRel(rc.getLocation()).toString() + " is removed");	//$NON-NLS-1$ 	//$NON-NLS-2$
 						rebuild = true;
 						break;
 					}
@@ -345,34 +345,34 @@ public class BuildDescription implements IBuildDescription {
 			}
 
 			if(removed){
-				if(DbgUtil.DEBUG)
-					DbgUtil.trace("action to be removed");	//$NON-NLS-1$
+				if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+					DbgUtil.trace("BuildDescription.visit() - action to be removed");	//$NON-NLS-1$
 
 				action.setRemoved();
 
 				for (IBuildResource outRc : action.getOutputResources()) {
-					if(DbgUtil.DEBUG)
-						DbgUtil.trace("setting remove state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
+					if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+						DbgUtil.trace("BuildDescription.visit() - setting remove state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
 
 					((BuildResource)outRc).setRemoved(true);
 				}
 
 			} else if(rebuild){
-				if(DbgUtil.DEBUG)
-					DbgUtil.trace("action needs rebuild");	//$NON-NLS-1$
+				if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+					DbgUtil.trace("BuildDescription.visit() - action needs rebuild");	//$NON-NLS-1$
 
 				action.setRebuildState(true);
 
 				for (IBuildResource outRc : action.getOutputResources()) {
-					if(DbgUtil.DEBUG)
-						DbgUtil.trace("setting rebuild state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
+					if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+						DbgUtil.trace("BuildDescription.visit() - setting rebuild state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
 
 					((BuildResource)outRc).setRebuildState(true);
 				}
 			}
 
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("<<leaving..");	//$NON-NLS-1$
+			if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+				DbgUtil.trace("BuildDescription.visit() << leaving..");	//$NON-NLS-1$
 
 			return VISIT_CONTINUE;
 		}
@@ -422,16 +422,16 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public void synchRebuildState() throws CoreException{
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("--->Synch started");	//$NON-NLS-1$
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+			DbgUtil.trace("BuildDescription.synchRebuildState() ---> Synch started");	//$NON-NLS-1$
 
 		BuildDescriptionManager.accept(new RebuildStateSynchronizer(), this, true);
 
 		if(fOutputStep.needsRebuild())
 			fInputStep.setRebuildState(true);//needed for the pre-build step invocation
 
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("<---Synch stopped");	//$NON-NLS-1$
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+			DbgUtil.trace("BuildDescription.synchRebuildState() <--- Synch stopped");	//$NON-NLS-1$
 	}
 
 	private BuildIOType findTypeForExtension(BuildStep step, boolean input, String ext){
@@ -892,7 +892,7 @@ public class BuildDescription implements IBuildDescription {
 						break;
 				}
 				if(i == rcs.length){
-					if(DbgUtil.DEBUG){
+					if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0){
 						DbgUtil.trace("unused step found: " + DbgUtil.stepName(step));	//$NON-NLS-1$
 					}
 
@@ -900,7 +900,7 @@ public class BuildDescription implements IBuildDescription {
 					if(step.needsRebuild()
 							&& step.getTool() != null
 							&& step.getTool().getCustomBuildStep()){
-						if(DbgUtil.DEBUG){
+						if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0){
 							DbgUtil.trace("unused step is an RCBS needing rebuild, settings input step rebuild state to true");	//$NON-NLS-1$
 						}
 						fInputStep.setRebuildState(true);
@@ -990,14 +990,20 @@ public class BuildDescription implements IBuildDescription {
 		return new Path(fProject.getLocationURI().getPath());
 	}
 
-	private BuildResource[] addOutputs(IPath paths[], BuildIOType buildArg, IPath outDirPath){
-		if(paths != null){
+	private BuildResource[] addOutputs(IPath resPaths[], BuildIOType buildArg, IPath outDirPath){
+		if(resPaths != null){
+	      if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
+	         DbgUtil.trace("BuildDescription.addOutputs() - " + ((BuildStep)buildArg.getStep()).getTool() + " - " + resPaths[0].toOSString());  //$NON-NLS-1$
+		   
 			List<BuildResource> list = new ArrayList<BuildResource>();
-			for (IPath path : paths) {
+			
+			
+			
+			for (IPath path : resPaths) {
 				IPath outFullPath = path;
 				IPath outWorkspacePath = path;
 				IPath outProjPath;
-				IPath projLocation = new Path(fProject.getLocationURI().getPath());
+				IPath projLocation = getProjectLocation();
 
 				if(outFullPath.isAbsolute()){
 					outProjPath = outFullPath;
@@ -1030,7 +1036,40 @@ public class BuildDescription implements IBuildDescription {
 					}
 				}
 
-				BuildResource outRc = createResource(outWorkspacePath, getURIForLocation(outFullPath));
+				//BuildResource outRc = createResource(outWorkspacePath, getURIForLocation(outFullPath));
+				//list.add(outRc);
+				//buildArg.addResource(outRc);
+
+			}
+			
+			
+			
+			
+			
+			
+			for (IPath resPath : resPaths) {
+				IPath outAbsPath = resPath;
+				IPath outRelWorkspacePath = resPath;
+				IPath outRelProjPath;
+
+				IPath confRelLocation = outDirPath.removeFirstSegments(1);
+				IPath projAbsLocation = getProjectLocation();
+
+				if(resPath.isAbsolute()){
+					// Note : It is assumed that the segment of the resPath is a file and this needs to be removed
+					// to get the good relative path. The makeRelativeTo is too stupid to check for the last segment being a file.
+					// Thus the resource file is removed for the relative computing then append to get the relative path with resource file.
+					outRelProjPath = resPath.removeLastSegments(1).makeRelativeTo(projAbsLocation);
+					outRelProjPath = outRelProjPath.append(resPath.lastSegment());
+					outAbsPath = resPath;
+				} 
+				else {
+					outAbsPath = projAbsLocation.append(confRelLocation.append(resPath));
+					outRelProjPath = confRelLocation.append(resPath);
+				}
+				outRelWorkspacePath = fProject.getFullPath().makeRelative().append(outRelProjPath);
+
+				BuildResource outRc = createResource(outRelWorkspacePath, getURIForLocation(outAbsPath));
 				list.add(outRc);
 				buildArg.addResource(outRc);
 
@@ -1100,46 +1139,89 @@ public class BuildDescription implements IBuildDescription {
 		//  1.  If the tool is the build target and this is the primary output,
 		//      use artifact name & extension
 		if (fTargetStep == action){
-			String artifactName = fCfg.getArtifactName();
-			try {
-				String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactName, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-				if((tmp = tmp.trim()).length() > 0)
-					artifactName = tmp;
-			} catch (BuildMacroException e){
-			}
+		   
+		   IPath path = null;
+         IOutputType type = action.getTool().getPrimaryOutputType();
+         String[] outputNames = type.getOutputNames();
+         IManagedOutputNameProvider nameProvider = type.getNameProvider();  
+         IOption option = tool.getOptionBySuperClassId(type.getOptionId());         
+		   
+         if (nameProvider != null) {
+            IPath[] inPaths;
+            if(buildRc != null){
+               inPaths = new Path[1];
+               inPaths[0] = buildRc.getLocation();
+            } else {
+               inPaths = new Path[rcs.length];
+               for(int k = 0; k < inPaths.length; k++){
+                  inPaths[k] = rcs[k].getLocation();
+               }
+            }
+            path = nameProvider.getOutputNames(tool, inPaths)[0];
+         }
+         else if (outputNames != null) {
+            try{
+               String pathStrings[] = ManagedBuildManager
+                     .getBuildMacroProvider()
+                     .resolveStringListValues(
+                           outputNames,
+                           "", //$NON-NLS-1$
+                           " ", //$NON-NLS-1$
+                           IBuildMacroProvider.CONTEXT_FILE,
+                           new FileContextData(resPath, null, option, tool));
+               if(pathStrings != null) {
+                  path = Path.fromOSString(pathStrings[0]);
+               }
+            } 
+            catch (BuildMacroException e){
+            }
+         }
+         else {
+            String artifactName = fCfg.getArtifactName();
+            try {
+               String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactName, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
+               if((tmp = tmp.trim()).length() > 0)
+                  artifactName = tmp;
+            } catch (BuildMacroException e){
+            }
 
-			String artifactExt = fCfg.getArtifactExtension();
-			try {
-				String tmp = ManagedBuildManager.getBuildMacroProvider()
-								.resolveValue(artifactExt, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-				if((tmp = tmp.trim()).length() > 0)
-					artifactExt = tmp;
-			} catch (BuildMacroException e) {
-			}
+            String artifactExt = fCfg.getArtifactExtension();
+            try {
+               String tmp = ManagedBuildManager.getBuildMacroProvider()
+                     .resolveValue(artifactExt, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
+               if((tmp = tmp.trim()).length() > 0)
+                  artifactExt = tmp;
+            } catch (BuildMacroException e) {
+            }
 
-			String artifactPrefix = tool.getOutputPrefix();
-			if(artifactPrefix != null && artifactPrefix.length() != 0){
-				try {
-					String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactPrefix, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-					if((tmp = tmp.trim()).length() > 0)
-						artifactPrefix = tmp;
-				} catch (BuildMacroException e){
-				}
-				artifactName = artifactPrefix + artifactName;
-			}
+            String artifactPrefix = tool.getOutputPrefix();
+            if(artifactPrefix != null && artifactPrefix.length() != 0){
+               try {
+                  String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactPrefix, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
+                  if((tmp = tmp.trim()).length() > 0)
+                     artifactPrefix = tmp;
+               } catch (BuildMacroException e){
+               }
+               artifactName = artifactPrefix + artifactName;
+            }
 
-			IPath path = new Path(artifactName);
-			if(artifactExt != null && artifactExt.length() != 0)
-				path = path.addFileExtension(artifactExt);
-
-			IOutputType type = action.getTool().getPrimaryOutputType();
+            path = new Path(artifactName);
+            if(artifactExt != null && artifactExt.length() != 0)
+               path = path.addFileExtension(artifactExt);
+         }
 			BuildIOType ioType = action.getIOTypeForType(type, false);
 			if(ioType == null)
 				ioType = action.createIOType(false, true, type);
 			addOutputs(new IPath[]{path}, ioType, outDirPath);
-		} else if (outTypes != null && outTypes.length > 0) {
+		}
+		// We do need to add secondary output produced by the target tool as well otherwise the secondary 
+		// outputs will never be cleaned
+		if (outTypes != null && outTypes.length > 0) {
 			for (IOutputType type : outTypes) {
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());
+				if (fTargetStep == action && primaryOutput) {
+				   continue;
+				}
 				String outputPrefix = type.getOutputPrefix();
 				String[] pathStrings = null;
 				IPath[] paths = null;
@@ -1314,7 +1396,7 @@ public class BuildDescription implements IBuildDescription {
 						String namePattern = type.getNamePattern();
 						IPath namePatternPath = null;
 						String inExt = resPath.getFileExtension();
-						String outExt = tool.getOutputExtension(inExt);
+						String outExt = type.getOutputExtensionsAttribute()[0];
 						if (namePattern == null || namePattern.length() == 0) {
 							namePattern = /*outDirPath.toOSString() +*/ outputPrefix + IManagedBuilderMakefileGenerator.WILDCARD;
 							if (outExt != null && outExt.length() > 0) {
@@ -2056,7 +2138,7 @@ public class BuildDescription implements IBuildDescription {
 	private ITool[] doCalcDeps(ITool tool){
 		if(!fToolInProcesSet.add(tool)){
 			//TODO throw error?
-			if(DbgUtil.DEBUG)
+			if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
 				DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 			return new ITool[0];
 		}
@@ -2082,7 +2164,7 @@ public class BuildDescription implements IBuildDescription {
 							if(dep != tool)
 								set.add(dep);
 							else{
-								if(DbgUtil.DEBUG)
+								if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
 									DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 								//TODO throw error
 							}
@@ -2099,7 +2181,7 @@ public class BuildDescription implements IBuildDescription {
 	private ITool[] doCalcConsumers(ITool tool){
 		if(!fToolInProcesSet.add(tool)){
 			//TODO throw error?
-			if(DbgUtil.DEBUG)
+			if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
 				DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 			return new ITool[0];
 		}
@@ -2125,7 +2207,7 @@ public class BuildDescription implements IBuildDescription {
 							if(consumer != tool)
 								set.add(consumer);
 							else{
-								if(DbgUtil.DEBUG)
+								if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
 									DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 								//TODO throw error
 							}
@@ -2171,7 +2253,7 @@ public class BuildDescription implements IBuildDescription {
 				){
 			if(fTargetStep != null){
 				//TODO: this is an error case, log or perform some special handling
-				if(DbgUtil.DEBUG)
+				if((DbgUtil.DEBUG & DbgUtil.BUILD_DESCRIPTION) != 0)
 					DbgUtil.trace("ERROR: target action already created");	//$NON-NLS-1$
 			}
 			fTargetStep = step;

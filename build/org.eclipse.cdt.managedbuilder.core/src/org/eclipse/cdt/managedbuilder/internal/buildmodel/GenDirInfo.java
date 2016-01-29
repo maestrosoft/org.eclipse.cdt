@@ -65,7 +65,7 @@ public class GenDirInfo {
 					folder.create(true, true, monitor);
 					folder.setDerived(true);
 				} catch (CoreException e) {
-					if(DbgUtil.DEBUG)
+					if((DbgUtil.DEBUG & DbgUtil.GEN_DIR_INFO) != 0)
 						DbgUtil.trace("GenDirInfo: failed to create dir: " + e.getLocalizedMessage()); //$NON-NLS-1$ 
 					//TODO: log the error
 				}
