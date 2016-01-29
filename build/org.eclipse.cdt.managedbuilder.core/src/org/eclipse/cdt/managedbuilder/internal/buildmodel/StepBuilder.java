@@ -155,8 +155,8 @@ public class StepBuilder implements IBuildModelBuilder {
 				try {
 					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
 				} catch (CoreException e) {
-					if(DbgUtil.DEBUG){
-						DbgUtil.trace("failed to refresh resource " 	//$NON-NLS-1$
+					if((DbgUtil.DEBUG & DbgUtil.STEP_BUILDER) != 0){
+						DbgUtil.trace("StepBuilder.refreshOutputs() - failed to refresh resource " 	//$NON-NLS-1$
 								+ file.getFullPath()
 								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
 					}
@@ -179,8 +179,8 @@ public class StepBuilder implements IBuildModelBuilder {
 				try {
 					rc.delete(true, monitor);
 				} catch (CoreException e) {
-					if(DbgUtil.DEBUG){
-						DbgUtil.trace("failed to delete resource " 	//$NON-NLS-1$
+					if((DbgUtil.DEBUG & DbgUtil.STEP_BUILDER) != 0){
+						DbgUtil.trace("StepBuilder.cleanOutputs() - failed to delete resource " 	//$NON-NLS-1$
 								+ rc.getFullPath()
 								+ ", error: " + e.getLocalizedMessage());	//$NON-NLS-1$
 					}
@@ -203,6 +203,11 @@ public class StepBuilder implements IBuildModelBuilder {
 		for(int i = 0; i < rcs.length; i++){
 			fDirs.createDir(rcs[i], monitor);
 		}
+		// By default the output resources are in the working directory and this directory would have been created 
+		// at this level. However if the user create a tool and override the default output resource directory
+		// then the working directory will not exist and the tool execution will fail at the command launcher level. Thus 
+		// we need to check the existence of the directory and create it if needed.   
+		fCWD.toFile().mkdir();
 	}
 
 	public int getNumCommands() {
