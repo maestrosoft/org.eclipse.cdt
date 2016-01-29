@@ -21,7 +21,6 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -55,8 +54,8 @@ public class BuildResource implements IBuildResource {
 
 		info.resourceCreated(this);
 
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + fullWorkspacePath + " created");	//$NON-NLS-1$	//$NON-NLS-2$
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_RESOURCE) != 0)
+			DbgUtil.trace("BuildResource() - BuildResource " + (fIsProjectRc ? fullWorkspacePath : locationURI.getPath()) + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getLocation()
@@ -120,9 +119,9 @@ public class BuildResource implements IBuildResource {
 	}
 
 	public void setRemoved(boolean removed) {
-		if(DbgUtil.DEBUG){
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_RESOURCE) != 0){
 			if(removed)
-				DbgUtil.trace("REMOVED state: resource " + DbgUtil.resourceName(this)); //$NON-NLS-1$
+				DbgUtil.trace("BuildResource.setRemoved() - REMOVED state: resource " + DbgUtil.resourceName(this)); //$NON-NLS-1$
 		}
 		fIsRemoved = removed;
 		if(fIsRemoved)
@@ -144,15 +143,6 @@ public class BuildResource implements IBuildResource {
 				inStep.removeResource(fProducerArg, this, true);
 				fProducerArg = arg;
 			} else {
-				// Bug 461628
-				// Check if this resource is an output produced by a Tool that support merging in which case
-				// a producer can already be defined by a previous step. This is supported.
-				
-				IBuildStep step = fProducerArg.getStep();
-				ITool tool = step instanceof BuildStep ? ((BuildStep)(step)).getTool() : null;
-				if(tool != null && !arg.isInput()) {
-					return;
-				}
 				String err = "ProducerArgument not null!!!\n";	//$NON-NLS-1$
 
 				String rcName = DbgUtil.resourceName(this);
@@ -162,10 +152,14 @@ public class BuildResource implements IBuildResource {
 
 				String externalizedErr = BuildModelMessages.getFormattedString("BuildResource.0", rcs); //$NON-NLS-1$
 
-				if(DbgUtil.DEBUG){
+				if((DbgUtil.DEBUG & DbgUtil.BUILD_RESOURCE) != 0){
 					err = err + externalizedErr + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
 				}
-				throw new IllegalArgumentException(externalizedErr);
+
+				// For some compiler like Microsoft Visual studio C++ it is legal to produce multiple output with the same name.
+				if((DbgUtil.DEBUG & DbgUtil.MICROSOFT_VISUAL_CPP) != 0 ) {
+				   throw new IllegalArgumentException(externalizedErr);
+				}
 			}
 		}
 	}
@@ -205,8 +199,8 @@ public class BuildResource implements IBuildResource {
 	BuildIOType[][] remove(){
 		BuildIOType types[][] = clear();
 
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("resource " + DbgUtil.resourceName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
+		if((DbgUtil.DEBUG & DbgUtil.BUILD_RESOURCE) != 0)
+			DbgUtil.trace("BuildResource.remove() - resource " + DbgUtil.resourceName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		fInfo.resourceRemoved(this);
 		fInfo = null;

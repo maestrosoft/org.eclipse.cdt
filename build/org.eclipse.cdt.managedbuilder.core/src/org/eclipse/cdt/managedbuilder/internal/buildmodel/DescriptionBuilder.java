@@ -80,15 +80,17 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 			if(fMonitor.isCanceled())
 				return VISIT_STOP;
 
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("visiting step " + DbgUtil.stepName(action)); //$NON-NLS-1$
+			if((DbgUtil.DEBUG & DbgUtil.DESCRIPTION_BUILDER) != 0)
+				DbgUtil.trace("DescriptionBuilder.visit() - visiting step " + DbgUtil.stepName(action)); //$NON-NLS-1$
 			if(!action.isRemoved()
 					&& (!fBuildIncrementaly || action.needsRebuild())){
-				if(DbgUtil.DEBUG)
-					DbgUtil.trace("step " + DbgUtil.stepName(action) + " needs rebuild" ); //$NON-NLS-1$ //$NON-NLS-2$
+				if((DbgUtil.DEBUG & DbgUtil.DESCRIPTION_BUILDER) != 0)
+					DbgUtil.trace("DescriptionBuilder.visit() - step " + DbgUtil.stepName(action) + " needs rebuild" ); //$NON-NLS-1$ //$NON-NLS-2$
 				StepBuilder builder = getStepBuilder(action);//new StepBuilder(action, fCWD, fResumeOnErrs, fDir);
 
 				if(fBuild){
+					if((DbgUtil.DEBUG & DbgUtil.DESCRIPTION_BUILDER) != 0)
+						DbgUtil.trace("DescriptionBuilder.visit() - Executing IBuildStep.build() action"); 
 					switch(builder.build(fOut, fErr, new SubProgressMonitor(fMonitor, builder.getNumCommands()))){
 					case STATUS_OK:
 						break;
@@ -104,6 +106,10 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 				} else {
 					fNumCommands += builder.getNumCommands();
 				}
+			}
+			else {
+				if((DbgUtil.DEBUG & DbgUtil.DESCRIPTION_BUILDER) != 0)
+					DbgUtil.trace("DescriptionBuilder.visit() - step " + DbgUtil.stepName(action) + " do not needs rebuild" ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			if(fStatus != STATUS_CANCELLED
@@ -182,6 +188,9 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 
 	public int getNumCommands() {
 		if(fNumCommands == -1){
+			if((DbgUtil.DEBUG & DbgUtil.DESCRIPTION_BUILDER) != 0)
+				DbgUtil.trace("\nDescriptionBuilder.getNumCommands() >> computing total command");	//$NON-NLS-1$
+			
 			fNumCommands = 0;
 			BuildStepVisitor visitor = new BuildStepVisitor(null, null, new NullProgressMonitor(), false);
 			try {
@@ -190,8 +199,8 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 			} catch (CoreException e) {
 				//TODO: report an error
 			}
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("Description Builder: total work = " + fNumCommands);	//$NON-NLS-1$
+			if((DbgUtil.DEBUG & DbgUtil.DESCRIPTION_BUILDER) != 0)
+				DbgUtil.trace("DescriptionBuilder.getNumCommands() << Description Builder: total command = " + fNumCommands + "\n");	//$NON-NLS-1$
 		}
 		return fNumCommands;
 	}
